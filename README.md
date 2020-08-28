@@ -1,43 +1,76 @@
-### 简介
+# Gaea
+## Introduction
+`Gaea` is a Gin-based web framework. In actual work, there are a series of additional engineering issues that need to be resolved before the project is applied to the production environment.
+Otherwise, the portability of the system will be poor, and developers will not be able to focus on business development.
+Incorporated into a complete set of solutions: dependency management, configuration management, compilation and deployment, monitoring & alarms, and support for one-click quick construction of web applications. If you are considering writing a web server in Golang, then Gaea is undoubtedly your best choice!
 
-Gaea 是基于 [Gin](https://github.com/gin-gonic/gin) 封装的Web框架, 在其基础上做了一些加强如：增加启动配置项、热更新、依赖管理、编译部署方案
+## Quick Start
+### Notice
+You need to replace the name in the project, such as `gaea` => `your app name`
 
-特点:
-* 保留Gin原有所有功能
-* 简单易上手
-* 灵活丰富的中间件
-* 性能非常强劲
+```golang
+//Recommended  $GOPATH/src  as your workspace
+$ cd $GOPATH/src/
 
+//clone the framework to local
+$ git clone git@github.com:tal-tech/gaea.git
+```
 
-#### 各大主流框架路由性能对比
+### Build & Run
+The following is a simple example, detailed [Documentation](https://github.com/tal-tech/gaea-doc/blob/master/SUMMARY.md)
 
-![pic](images/jianjie_xingneng.png)
-(图片来资源网络)
+```golang
+//Will use makefile to compile and generate binary files to the bin directory
+$ cd gaea
+$ make
+$ ./bin/gaea
+2020/08/26 14:40:02 CONF INIT,path:../conf/conf.ini
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
 
+[GIN-debug] GET    /demo/test                --> gaea/app/controller/democontroller.GaeaDemo (1 handlers)
+2020/08/26 14:40:02 [overseer master] run
+2020/08/26 14:40:02 [overseer master] starting /mnt/d/codes/go/src/gaea/bin/gaea
+2020/08/26 14:40:02 CONF INIT,path:../conf/conf.ini
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
 
-#### Gaea性能压测
-Gaea框架相比于原生Gin 影响性能的点其实是全部集中在中间件上，因为每次http请求都会跑一边，所以，观测下在各个中间开启时对整体性能的影响情况
-##### 压测条件
+[GIN-debug] GET    /demo/test                --> gaea/app/controller/democontroller.GaeaDemo (1 handlers)
+2020/08/26 14:40:02 [overseer slave#1] run
+2020/08/26 14:40:02 [overseer slave#1] start program
+2020/08/26 14:40:09 [overseer master] proxy signal (window changed)
 
-| 条件 |  值 |
+```
+
+## Comparison of routing performance of major mainstream frameworks
+
+![pic](./images/jianjie_xingneng.png)
+
+(Picture to Resource Network)
+
+#### Gaea Benchmark
+Compared with the native Gin, the point that the Gaea framework affects performance is actually all concentrated on the middleware, because every http request will be run again, so observe the impact on the overall performance when each middle is turned on
+##### Environment
+
+| Metrics |  Remarks |
 | ---- | ---- |
-| 系统 |  virtualbox 虚拟机上 centos7 |
-| 内存| 1GB |
-|CPU| 单核|
-|请求数量| 10万|
-|并发数量|100|
-|传输数据|{"code":0,"data":"hell world","msg":"ok","stat":1}|
+| SyesTem |  vm centos7 |
+| Mem| 1GB |
+|CPU| 1|
+|Request number| 100000|
+|Concurrent number |100|
+|Data|{"code":0,"data":"hell world","msg":"ok","stat":1}|
  
-##### 压测结果
+
 
 ![pic](./images/perf.png)
 
-从图中我们可以明显看出：
-* Gaea的默认配置会带来一定的性能耗损，大约30%
-* 其中`Logger`中间件在各个中间件影响性能比重最大，其它中间件几乎可以忽略不计
+We can clearly see from the figure:
+* Gaea's default configuration will bring a certain amount of energy consumption, about 30%
+* Among them, the `Logger` middleware has the largest impact on the performance of each middleware, and other middleware is almost negligible
 
-*注：测试中的中间间是测试用得并没有进行开源*
+*Note: The middleware in the test is used for testing and not open source*
 
-在实际项目应用中，当`Logger` 中间件是瓶颈点时，我们可以关闭它，毕竟请求日志在网关层也会记录！
-
-此外，对[日志库](https://github.com/tal-tech/loggerX)使用建议日志级别设定为`WARNING`
+In actual project applications, when [Log](https://github.com/tal-tech/loggerX) middleware is the bottleneck, we can close it or adjust the log level to `WARNING`
