@@ -11,7 +11,6 @@
 * [**路由**](route/index.md)
     * [请求封装](route/mergerequest.md)
     * [重定向](route/redirect.md)
-    * [隔离](route/isolation.md)
 
 * [**控制器**](controller/request.md)
     * [创建](controller/request.md)
